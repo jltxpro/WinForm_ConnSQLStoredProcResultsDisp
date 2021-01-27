@@ -1,15 +1,10 @@
-﻿using CobraCore.Utilities;
-using Entities.Models;
-using MySql.Data.MySqlClient;
+﻿using Utilities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinForm_ConnSQLStoredProcResultsDisp
@@ -24,12 +19,12 @@ namespace WinForm_ConnSQLStoredProcResultsDisp
             this.lblMessage.Visible = false;
 
         }
-
+/*
         private void label1_Click(object sender, EventArgs e)
         {
 
         }
-
+*/
         private void btnConnect_Click(object sender, EventArgs e)
         {
             this.lblMessage.Visible = false;
@@ -39,85 +34,41 @@ namespace WinForm_ConnSQLStoredProcResultsDisp
                 string.IsNullOrWhiteSpace(this.txtDatabase.Text) ||
                 string.IsNullOrWhiteSpace(this.txtUser.Text) ||
                 string.IsNullOrWhiteSpace(this.txtPassword.Text) ||
-                string.IsNullOrWhiteSpace(this.txtPort.Text) ||
-                string.IsNullOrWhiteSpace(this.txtSSL.Text) ||
                 string.IsNullOrWhiteSpace(this.txtStoredProcedure.Text))
             {
-                this.lblMessage.ForeColor = Color.Red;
-                this.lblMessage.Text = "Error: Please complete all SQL Server Connection Settings.";
-                this.lblMessage.Visible = true;
-
+                showError("Error: Please complete all SQL Server Connection Settings");
                 return;
             }
 
-            string connString = String.Format("server={0};port={1};user id={2}; password={3}; database={4}; SslMode={5}",
-                    this.txtServer.Text, this.txtPort.Text, this.txtUser.Text, this.txtPassword.Text, this.txtDatabase.Text, this.txtSSL.Text);
+            // Set the wait cursor
+            Cursor.Current = Cursors.WaitCursor;
+
+            // Create the SQL connection string 
+            string connString = String.Format("server={0};user id={1}; password={2}; database={3}",
+                    this.txtServer.Text, this.txtUser.Text, this.txtPassword.Text, this.txtDatabase.Text);
 
             ConnectionFactory cF = new ConnectionFactory();
-            MySqlConnection connection = cF.CreateConnection(connString);
-            StoredProcedureSchema spSchema = new StoredProcedureSchema();
+            SqlConnection connection = cF.CreateConnection(connString);
 
-            var result = GetAll(connection, spSchema, this.txtStoredProcedure.Text);
+            // Run the stored procedure 
+            var result = GetAll(connection, this.txtStoredProcedure.Text);
+            // Populate the grid with the data  
+            this.dataGridView1.DataSource = result;
 
-            /*
-            try
-            {
-                connection.Open();
-                IDbCommand command = connection.CreateCommand();
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = this.txtStoredProcedure.Text; //obj.GetCommandText_GetAll();
-
-                // Let's run the stored proc to get the column names, 
-                //DataTable table = connection.GetSchema("Procedures");
-                //DisplayData(table);
-
-                //DbParameterService.AddWithValue(command, "_subscriberid", subscriberId);
-
-                using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection))
-                {
-                    bool hasRows = false;
-
-                    while (reader.Read())
-                    {
-                        if (!hasRows)
-                            hasRows = true;
-                    }
-
-                    reader.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                this.lblMessage.ForeColor = Color.Red;
-                this.lblMessage.Text = $"Error: {ex.Message}";
-                this.lblMessage.Visible = true;
-                //throw new Exception(ex.Message);
-            }
-            finally
-            {
-                if (connection is IDisposable)
-                {
-                    var disposableConnection = connection as IDisposable;
-                    disposableConnection.Dispose();
-                }
-            }
-            */
-
-
-            // if connection tested OK, then proceed with running stored proc
-            //var companies = new Interactor<Company>(new ConnectionFactory()).GetAll(subscriberId, new Company());
-            //var result = _mapper.Map<IEnumerable<CompanyDto>>(companies);
-
-            //
-
+            // Set the default cursor
+            Cursor.Current = Cursors.Default;
         }
 
 
-
-        public IEnumerable<StoredProcedureSchema> GetAll(MySqlConnection connection, 
-            StoredProcedureSchema obj, string storedProcedureName)
+        /*
+         *  GetAll()
+         *  Returns a DataTable for the specified storedProcedureName by parsing through the columns returned by 
+         *  then, creating the columns on the DataTable and lastly adding rows with the data 
+         *  returned by the stored proc. 
+        */
+        private DataTable GetAll(SqlConnection connection, string storedProcedureName)
         {
-            var objList = new List<StoredProcedureSchema>();
+            DataTable outputDataTable = new DataTable();
 
             try
             {
@@ -128,33 +79,56 @@ namespace WinForm_ConnSQLStoredProcResultsDisp
 
                 using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection))
                 {
-                    bool hasRows = false;
+                    //Get the schema definition for the columns returned by the Stored Procedure
+                    DataTable schemaTable = reader.GetSchemaTable();
 
-                    while (reader.Read())
+                    // Create a Dictionary with the Col. Name, Col. Type for each column returned by the Stored Procedure
+                    Dictionary<string, string> storedProcedureColumns = 
+                                    new Dictionary<string, string>(); 
+
+                    //Read each column definition from the schemaTable
+                    for (int i = 0; i < schemaTable.Rows.Count; i++) 
                     {
-                        var tmpObj = Activator.CreateInstance(typeof(StoredProcedureSchema));
+                        DataRow row = schemaTable.Rows[i];
+                        string colName=string.Empty, colDataType=string.Empty;
 
-                        foreach (var item in obj.GetFieldMapper())
+                        //Retrieve the Column Name and DataType for each column  
+                        foreach (DataColumn col in schemaTable.Columns)
                         {
-                            var propertyName = item.Key;
-                            var propertyInfo = tmpObj.GetType().GetProperty(propertyName);
-
-                            // make sure object has the property 
-                            if (propertyInfo != null)
+                            if (col.ColumnName == "ColumnName")
                             {
-                                string dbField = item.Value;
-                                if (propertyInfo.PropertyType == typeof(System.DateTime) ||
-                                            propertyInfo.PropertyType == typeof(System.Int32))
-                                    propertyInfo.SetValue(tmpObj, reader[dbField]);
-                                else
-                                    propertyInfo.SetValue(tmpObj, reader[dbField].ToString());
+                                colName = row[col.Ordinal].ToString();
+                                Debug.WriteLine("{0}", colName);
+                            }
+
+                            if (col.ColumnName == "DataType")
+                            {
+                                colDataType = row[col.Ordinal].ToString();
+                                Debug.WriteLine("{0}", colDataType);
                             }
                         }
 
-                        objList.Add((StoredProcedureSchema)tmpObj);
+                        // add Column Name and DataType 
+                        storedProcedureColumns.Add(colName, colDataType);
+                        outputDataTable.Columns.Add(colName, typeof(string));
 
-                        if (!hasRows)
-                            hasRows = true;
+                    }
+
+                    while (reader.Read())
+                    {
+                        // Create a new Row on the DataTable 
+                        DataRow dr = outputDataTable.NewRow();
+
+                        // Loops through each column on the storedProcedureColumns 
+                        foreach (var item in storedProcedureColumns)
+                        {
+                            var dbColumnName = item.Key;
+                            var dbColumnDataType = item.Value;
+                            dr[dbColumnName] = reader[dbColumnName].ToString();
+                        }
+
+                        //Add new row to the DataTable
+                        outputDataTable.Rows.Add(dr);
                     }
 
                     reader.Close();
@@ -162,10 +136,7 @@ namespace WinForm_ConnSQLStoredProcResultsDisp
             }
             catch (Exception ex)
             {
-                // throw new Exception(ex.Message);
-                this.lblMessage.ForeColor = Color.Red;
-                this.lblMessage.Text = $"Error: {ex.Message}";
-                this.lblMessage.Visible = true;
+                showError(ex.Message);
             }
             finally
             {
@@ -176,32 +147,30 @@ namespace WinForm_ConnSQLStoredProcResultsDisp
                 }
             }
 
-            return objList;
+            return outputDataTable;
         }
 
-
-
-
-
-
-
-
-        private static void DisplayData(System.Data.DataTable table)
+        private void showError(string message)
         {
-            foreach (System.Data.DataRow row in table.Rows)
+            this.lblMessage.ForeColor = Color.Red;
+            this.lblMessage.Text = $"Error: {message}";
+            this.lblMessage.Visible = true;
+        }
+
+        private void btnViewPwd_Click(object sender, EventArgs e)
+        {
+            // show or hide the password textbox 
+            if(this.txtPassword.UseSystemPasswordChar == true)
             {
-                foreach (System.Data.DataColumn col in table.Columns)
-                {
-                    Debug.WriteLine("{0} = {1}", col.ColumnName, row[col]);
-                }
-                Debug.WriteLine("============================");
+                this.txtPassword.UseSystemPasswordChar = false;
+                this.btnViewPwd.Text = "Hide";
             }
-        }
-
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
+            else
+            {
+                this.txtPassword.UseSystemPasswordChar = true;
+                this.btnViewPwd.Text = "Show";
+            }
+                
         }
     }
 }
