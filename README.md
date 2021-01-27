@@ -1,7 +1,7 @@
 # WinForm_ConnSQLStoredProcResultsDisp
 WinForm_ConnSQLStoredProcResultsDisp
 
-01/26/2021: This Windows Forms App calls a SQL server stored procedure that SELECTS data from a Database and displays the results on in a DataGrid control.
+01/26/2021: This Windows Forms App calls a SQL server stored procedure that SELECTS data from a Database and displays the results in a DataGrid control.
 The user is able to configure the Connection String, and specify the Stored Procedure to call. The app does not currently accept parametized SPs, but can be modified in the future to do so. 
 
 01/27/2021: Future upgrades. 
