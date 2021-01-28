@@ -36,9 +36,17 @@ namespace WinForm_ConnSQLStoredProcResultsDisp
             // Set the wait cursor
             Cursor.Current = Cursors.WaitCursor;
 
-            // Create the SQL connection string 
-            connString = String.Format("server={0};user id={1}; password={2}; database={3}; port={4}; SslMode={5}",
-                 this.txtServer.Text, this.txtUser.Text, this.txtPassword.Text, this.txtDatabase.Text, this.txtPort.Text, this.txtSSL.Text);
+            // Create the SQL connection string , with the basic data
+            connString = String.Format("server={0};user id={1}; password={2}; database={3}",
+                 this.txtServer.Text, this.txtUser.Text, this.txtPassword.Text, this.txtDatabase.Text);
+            
+            // if the optional Port# is not null, add the connection string
+            if (!string.IsNullOrWhiteSpace(this.txtPort.Text))
+                connString = connString + string.Format("; port={0}", this.txtPort.Text);
+            
+            // if the optional SSL is not null, add the connection string
+            if (!string.IsNullOrWhiteSpace(this.txtSSL.Text))
+                connString = connString + string.Format("; SslMode={0}", this.txtSSL.Text);
 
             try
             {
