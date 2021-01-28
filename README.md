@@ -1,7 +1,7 @@
 # WinForm_ConnSQLStoredProcResultsDisp
 WinForm_ConnSQLStoredProcResultsDisp
 
-01/28/2021: Code refactoring, optimized Data Reader logic, reorganized UI. 
+01/28/2021: Code refactoring, optimized Data Reader logic, reorganized UI. I will run tests tonight on MS SQL server. 
 
 01/27/2021: Future upgrades. 
 * Add a limit on the output rows ?. Since this App is able to connect to any stored procedure.
