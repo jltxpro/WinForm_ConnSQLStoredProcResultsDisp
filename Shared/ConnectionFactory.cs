@@ -20,38 +20,11 @@ namespace Utilities
     {
         public IDbConnection CreateConnection(string connString)
         {
-            MySqlConnection conn = new MySqlConnection(connString);
+            //MySqlConnection conn = new MySqlConnection(connString);
+            SqlConnection conn = new SqlConnection(connString);
             return conn;
         }
     }
-
-
-    /*
-        public class ConnectionFactory  
-        {
-            private CreateConnectionSQL connSQL = new CreateConnectionSQL();
-
-            //public SqlConnection CreateConnection(string connString)
-            public MySqlConnection CreateConnection(string connString)
-            {
-                return connSQL.CreateConnection(connString);
-            }
-
-        }
-
-        public class CreateConnectionSQL
-        {
-            //public SqlConnection CreateConnection(string connString)
-            public MySqlConnection CreateConnection(string connString)
-            {
-                //SqlConnection conn = new SqlConnection(connString);
-                MySqlConnection conn = new MySqlConnection(connString);
-                return conn;
-
-            }
-        }
-
-     */
 
 
 }

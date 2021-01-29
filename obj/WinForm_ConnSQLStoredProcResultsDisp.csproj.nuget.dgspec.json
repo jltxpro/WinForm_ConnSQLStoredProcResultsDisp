@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\adminfrontier\\Documents\\_JOSE_LOZANO\\GitHub\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj": {}
+    "C:\\Users\\joloz\\source\\repos\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\adminfrontier\\Documents\\_JOSE_LOZANO\\GitHub\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj": {
+    "C:\\Users\\joloz\\source\\repos\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\adminfrontier\\Documents\\_JOSE_LOZANO\\GitHub\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj",
+        "projectUniqueName": "C:\\Users\\joloz\\source\\repos\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj",
         "projectName": "WinForm_ConnSQLStoredProcResultsDisp",
-        "projectPath": "C:\\Users\\adminfrontier\\Documents\\_JOSE_LOZANO\\GitHub\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj",
-        "packagesPath": "C:\\Users\\adminfrontier\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\adminfrontier\\Documents\\_JOSE_LOZANO\\GitHub\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp\\obj\\",
+        "projectPath": "C:\\Users\\joloz\\source\\repos\\WinForm_ConnSQLStoredProcResultsDisp\\WinForm_ConnSQLStoredProcResultsDisp.csproj",
+        "packagesPath": "C:\\Users\\joloz\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joloz\\source\\repos\\WinForm_ConnSQLStoredProcResultsDisp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\adminfrontier\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\joloz\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -65,7 +65,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.405\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
         }
       }
     }
